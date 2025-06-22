@@ -1,7 +1,7 @@
 extends Control
 
-onready var player = $AnimationPlayer
+@onready var player = $AnimationPlayer
 
 func play(anim_name):
 	player.play(anim_name)
-	yield(player, "animation_finished")
+	await player.animation_finished

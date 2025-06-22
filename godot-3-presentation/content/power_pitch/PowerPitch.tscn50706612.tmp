@@ -1,0 +1,76 @@
+[gd_scene load_steps=15 format=3 uid="uid://b4yhk5stlwpng"]
+
+[ext_resource type="PackedScene" path="res://presentation/Presentation.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://content/power_pitch/slides/Title.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://content/power_pitch/slides/A_free_modern_engine.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://content/power_pitch/slides/State_of_the_art_3d_engine.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://content/power_pitch/slides/All-in-one_package.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://content/power_pitch/slides/CreateAnything.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://content/power_pitch/slides/CodeFreely.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://content/power_pitch/slides/Virtual_and_augmented_reality.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://content/power_pitch/slides/Professionals_use_godot.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://content/power_pitch/slides/Made_with_godot.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://content/power_pitch/slides/Godot_is_in_great_shape.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://content/power_pitch/slides/Learn_from_simple_free_demos.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://content/power_pitch/slides/How_to_get_started.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://content/power_pitch/slides/Thank_you.tscn" id="14"]
+
+[node name="PowerPitch" instance=ExtResource("1")]
+LANGUAGE_MAIN = "en"
+LANGUAGE_SECOND = "ja"
+
+[node name="Title" parent="Slides" index="0" instance=ExtResource("2")]
+anchors_preset = 15
+
+[node name="A_free_modern_engine" parent="Slides" index="1" instance=ExtResource("3")]
+visible = false
+anchors_preset = 15
+
+[node name="State_of_the_art_3d_engine" parent="Slides" index="2" instance=ExtResource("4")]
+visible = false
+anchors_preset = 15
+
+[node name="All_in_one_package" parent="Slides" index="3" instance=ExtResource("5")]
+visible = false
+anchors_preset = 15
+
+[node name="CreateAnything" parent="Slides" index="4" instance=ExtResource("6")]
+visible = false
+anchors_preset = 15
+
+[node name="CodeFreely" parent="Slides" index="5" instance=ExtResource("7")]
+visible = false
+anchors_preset = 15
+
+[node name="Virtual_and_augmented_reality" parent="Slides" index="6" instance=ExtResource("8")]
+visible = false
+anchors_preset = 15
+
+[node name="Professionals_use_godot" parent="Slides" index="7" instance=ExtResource("9")]
+visible = false
+anchors_preset = 15
+
+[node name="Made_with_godot" parent="Slides" index="8" instance=ExtResource("10")]
+visible = false
+anchors_preset = 15
+
+[node name="Godot_is_in_great_shape" parent="Slides" index="9" instance=ExtResource("11")]
+visible = false
+anchors_preset = 15
+
+[node name="Learn_from_simple_free_demos" parent="Slides" index="10" instance=ExtResource("12")]
+visible = false
+anchors_preset = 15
+
+[node name="How_to_get_started" parent="Slides" index="11" instance=ExtResource("13")]
+visible = false
+anchors_preset = 15
+
+[node name="Thank_you" parent="Slides" index="12" instance=ExtResource("14")]
+visible = false
+anchors_preset = 15
+
+[node name="TouchControls" parent="." index="2"]
+visible = false
+layout_mode = 3
+anchors_preset = 15

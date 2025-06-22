@@ -1,0 +1,282 @@
+[gd_scene load_steps=22 format=3 uid="uid://cqohtpuqvbfag"]
+
+[ext_resource type="PackedScene" path="res://slide/Slide.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://slide/widgets/Column.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://cld4x7fdx7do2" path="res://slide/widgets/Header.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://slide/widgets/Body.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://slide/layout/Row.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://bsatonv6bj1uh" path="res://slide/widgets/TextBox.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://slide/widgets/PictureSlideshow.tscn" id="7"]
+[ext_resource type="Texture2D" uid="uid://tain732saiei" path="res://content/power_pitch/img/daisy-dangerous-game-securas-1280x720.jpg" id="8"]
+[ext_resource type="PackedScene" path="res://slide/widgets/Picture.tscn" id="9"]
+[ext_resource type="Texture2D" uid="uid://b8drd17m8gdui" path="res://content/power_pitch/img/car-3d.jpg" id="10"]
+[ext_resource type="Script" uid="uid://c3jenerypl03x" path="res://presentation/legacy/PictureLegacy.gd" id="11"]
+[ext_resource type="PackedScene" uid="uid://csy0ccdqb5gh5" path="res://slide/widgets/Footer.tscn" id="12"]
+
+[sub_resource type="Animation" id="1"]
+resource_name = "SETUP"
+length = 0.01
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="2"]
+resource_name = "enter_from_left"
+length = 0.2
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rect_position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 0.57848),
+"update": 0,
+"values": [Vector2(-1920, 0), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="3"]
+resource_name = "enter_from_right"
+length = 0.2
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rect_position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(0.57848, 1),
+"update": 0,
+"values": [Vector2(1920, 0), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="4"]
+length = 0.2
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(0.482298, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="5"]
+length = 0.2
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 0.482298),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_5j06v"]
+_data = {
+&"SETUP": SubResource("1"),
+&"enter_from_left": SubResource("2"),
+&"enter_from_right": SubResource("3"),
+&"fade_in": SubResource("4"),
+&"fade_out": SubResource("5")
+}
+
+[sub_resource type="GDScript" id="GDScript_kgwhn"]
+script/source = "@tool
+extends Control
+
+@export var title := \"\":
+	set = set_title
+@export var subtitle := \"\":
+	set = set_subtitle
+
+var FONTS_DEFAULT = {
+	'title': preload(\"res://theme/fonts/title_montserrat.tres\"),
+	'subtitle': preload(\"res://theme/fonts/subtitle_montserrat.tres\"),
+}
+var FONTS_CJK = {
+	'title': preload(\"res://theme/fonts/title_noto.tres\"),
+	'subtitle': preload(\"res://theme/fonts/subtitle_noto.tres\"),
+}
+
+@onready var title_node = $Column/Title
+@onready var title_shadow_node = $Column/Title/Shadow
+@onready var subtitle_node = $Column/Subtitle
+@onready var subtitle_shadow_node = $Column/Subtitle/Shadow
+
+func _ready():
+	self.title = title
+	self.subtitle = subtitle
+
+func set_title(string):
+	title = string
+	if not title_node:
+		return
+	title_node.display(string)
+
+func set_subtitle(string):
+	subtitle = string
+	if not subtitle_node:
+		return
+	subtitle_node.display(string)
+
+func translate():
+	var locale = TranslationServer.get_locale()
+	var fonts = FONTS_DEFAULT
+	if locale in ['ja', 'ko', 'zh']:
+			fonts = FONTS_CJK
+
+	title_node.set('custom_fonts/font', fonts['title'])
+	title_shadow_node.set('custom_fonts/font', fonts['title'])
+	subtitle_node.set('custom_fonts/font', fonts['subtitle'])
+	subtitle_shadow_node.set('custom_fonts/font', fonts['subtitle'])
+
+func get_translation_data():
+	var data = { 'title': title }
+	if subtitle:
+		data['subtitle'] = subtitle
+	return data
+"
+
+[sub_resource type="GDScript" id="GDScript_7lsr1"]
+script/source = "tool
+extends Control
+
+export(String, MULTILINE) var text = \"\" setget set_text
+export(bool) var center = false setget set_center
+
+onready var _text = $Text
+var _text_processed = \"\"
+
+func _ready():
+	update_text()
+
+func set_text(string):
+	text = string
+	if not _text:
+		return
+	update_text()
+
+func set_center(value):
+	center = value
+	if not _text:
+		return
+	update_text()
+
+func update_text():
+	if center:
+		_text_processed = center_text(text)
+	else:
+		_text_processed = text
+	$Text.bbcode_text = _text_processed
+
+func center_text(string):
+	var bbcode = \"\"
+	for line in string.split(\"\\n\"):
+		line = \"%s%s%s\" % [\"[center]\", line, \"[/center]\"]
+		bbcode += line + \"\\n\"
+	return bbcode
+
+func get_translation_data():
+	return { 'text': text }
+"
+
+[sub_resource type="GDScript" id="GDScript_1iae3"]
+script/source = "tool
+extends Control
+
+export(String) var text = \"\" setget set_text
+
+var text_node
+
+func _ready():
+	text_node = $Text
+	self.text = text
+
+func set_text(string):
+	text = string
+	visible = text != \"\"
+	if not text_node:
+		return
+	text_node.display(string)
+
+func get_translation_data():
+	return {'text': text}
+"
+
+[node name="A_free_modern_engine" instance=ExtResource("1")]
+anchors_preset = 15
+
+[node name="AnimationPlayer" parent="." index="0"]
+libraries = {
+&"": SubResource("AnimationLibrary_5j06v")
+}
+
+[node name="Column" parent="." index="1" instance=ExtResource("2")]
+layout_mode = 2
+
+[node name="Header" parent="Column" index="0" instance=ExtResource("3")]
+layout_mode = 2
+script = SubResource("GDScript_kgwhn")
+title = "A Free modern engine"
+
+[node name="Body" parent="Column" index="1" instance=ExtResource("4")]
+layout_mode = 2
+
+[node name="Row" parent="Column/Body" index="0" instance=ExtResource("5")]
+layout_mode = 0
+
+[node name="TextBox" parent="Column/Body/Row" index="0" instance=ExtResource("6")]
+layout_mode = 2
+script = SubResource("GDScript_7lsr1")
+text = "Separate [color=#26BFE3]2d[/color] and [color=#E3266F]3d[/color] renderers
+Complete [color=#F2971A]game editor[/color]
+
+Create projects with Windows, Mac, Linux
+Build games for PC, mobile, web*"
+
+[node name="PictureSlideshow" parent="Column/Body/Row" index="1" instance=ExtResource("7")]
+layout_mode = 2
+
+[node name="daisy-dangerous-game-securas-1280x720" type="TextureRect" parent="Column/Body/Row/PictureSlideshow" index="2"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("8")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="3d-view" parent="Column/Body/Row/PictureSlideshow" index="3" instance=ExtResource("9")]
+layout_mode = 0
+texture = ExtResource("10")
+expand_mode = 1
+script = ExtResource("11")
+
+[node name="Footer" parent="Column" index="2" instance=ExtResource("12")]
+layout_mode = 2
+script = SubResource("GDScript_1iae3")
+text = "*And PS4, XboxOne, Switch, PS Vita..."

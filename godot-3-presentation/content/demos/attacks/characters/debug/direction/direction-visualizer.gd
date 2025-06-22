@@ -1,8 +1,8 @@
-extends Position2D
+extends Marker2D
 
 func _ready():
 	var player_node = $'..'
-	player_node.connect("direction_changed", self, '_on_Player_direction_changed')
+	player_node.direction_changed.connect(_on_Player_direction_changed)
 	set_process(false)
 
 

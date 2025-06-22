@@ -1,8 +1,5 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://c5mtqtkemlok"]
 
-[ext_resource path="res://touch_controls/touch_button/TouchButton.tscn" type="PackedScene" id=1]
+[ext_resource type="PackedScene" uid="uid://bnuc1wy5v7idx" path="res://touch_controls/touch_button/TouchButton.tscn" id="1"]
 
-
-[node name="TouchButtonLeft" index="0" instance=ExtResource( 1 )]
-
-
+[node name="TouchButtonLeft" instance=ExtResource("1")]

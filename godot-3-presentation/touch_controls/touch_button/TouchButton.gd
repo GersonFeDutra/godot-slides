@@ -7,17 +7,33 @@ const COLOR_OPAQUE = Color("#ffffffff")
 
 const TRANSITION_DURATION = 0.4
 
+var tween: Tween = null
+
 func _ready():
 	modulate = COLOR_TRANSPARENT
+	tween = create_tween()
+	tween.stop()
 
 func _on_mouse_entered():
-	$Tween.interpolate_property(self, 'modulate', modulate, COLOR_OPAQUE, TRANSITION_DURATION, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	$Tween.start()
+	if tween.is_valid() and tween.is_running():
+		tween.stop()
+	else:
+		tween = create_tween()
+	tween.tween_property(self, ^'modulate', COLOR_OPAQUE, TRANSITION_DURATION)
+	tween.set_trans(Tween.TRANS_LINEAR)
+	tween.set_ease(Tween.EASE_IN)
+	tween.play()
 
 func _on_mouse_exited():
-	$Tween.interpolate_property(self, 'modulate', modulate, COLOR_TRANSPARENT, TRANSITION_DURATION, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	$Tween.start()
+	if tween.is_valid() and tween.is_running():
+		tween.stop()
+	else:
+		tween = create_tween()
+	tween.tween_property(self, ^'modulate', COLOR_TRANSPARENT, TRANSITION_DURATION)
+	tween.set_trans(Tween.TRANS_LINEAR)
+	tween.set_ease(Tween.EASE_IN)
+	tween.play()
 
 func _on_pressed():
-	emit_signal("touched", self)
-	get_tree().set_input_as_handled()
+	touched.emit(self)
+	get_viewport().set_input_as_handled()

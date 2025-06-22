@@ -1,22 +1,26 @@
 extends Control
 
-export(float, 0.0, 10.0) var DISPLAY_DURATION = 4.0
-export(float, 0.0, 1.0) var TRANSITION_DURATION = 0.4
-export(Color) var COLOR_MODULATE_PAUSED = Color('#d9e2e5')
+@export_range(0.0, 10.0) var DISPLAY_DURATION: float = 4.0
+@export_range(0.0, 1.0) var TRANSITION_DURATION: float = 0.4
+@export var COLOR_MODULATE_PAUSED: Color = Color('#d9e2e5')
 
 const COLOR_OPAQUE = Color("#ffffffff")
 const COLOR_TRANSPARENT = Color("#00ffffff")
 
-onready var tween = $Tween
-onready var timer = $Timer
+@onready var tween: Tween
+@onready var timer = $Timer
 
-var paused = false setget set_paused
+var paused = false:
+	set = set_paused
 
 var slides = []
 var index = 0
 var picture_active
 
 func _ready():
+	tween = create_tween()
+	tween.stop()
+	
 	for node in get_children():
 		if not node is Control:
 			continue
@@ -26,6 +30,7 @@ func _ready():
 		widget.modulate = COLOR_TRANSPARENT
 		widget.hide()
 	start()
+	
 
 # Pause and navigation
 func _input(event):
@@ -57,10 +62,18 @@ func display(slide_index, animate=true):
 	picture_active.show()
 
 	if animate:
-		tween.interpolate_property(picture_previous, 'modulate', COLOR_OPAQUE, COLOR_TRANSPARENT, TRANSITION_DURATION, Tween.TRANS_LINEAR, Tween.EASE_IN)
-		tween.interpolate_property(picture_active, 'modulate', COLOR_TRANSPARENT, COLOR_OPAQUE, TRANSITION_DURATION, Tween.TRANS_LINEAR, Tween.EASE_IN)
-		tween.start()
-		yield(tween, "tween_completed")
+		if tween.is_valid() and tween.is_running():
+			tween.stop()
+		else:
+			tween = create_tween()
+		tween.tween_property(picture_previous, ^'modulate', COLOR_TRANSPARENT, TRANSITION_DURATION)
+		tween.set_trans(Tween.TRANS_LINEAR)
+		tween.set_ease(Tween.EASE_IN)
+		tween.tween_property(picture_active, ^'modulate', COLOR_OPAQUE, TRANSITION_DURATION)
+		tween.set_trans(Tween.TRANS_LINEAR)
+		tween.set_ease(Tween.EASE_IN)
+		tween.play()
+		await tween.finished
 
 	picture_previous.modulate = COLOR_TRANSPARENT
 	picture_active.modulate = COLOR_OPAQUE
@@ -78,4 +91,5 @@ func start():
 	picture_active.modulate = COLOR_OPAQUE
 	picture_active.show()
 	timer.wait_time = DISPLAY_DURATION
-	timer.start()
+	
+	timer.call_deferred(&"start")

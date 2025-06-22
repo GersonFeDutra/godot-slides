@@ -5,7 +5,7 @@ signal health_depleted
 signal status_changed
 
 var health = 0
-export(int) var max_health = 9
+@export var max_health: int = 9
 
 var status = null
 const POISON_DAMAGE = 1
@@ -14,7 +14,7 @@ var poison_cycles = 0
 
 func _ready():
 	health = max_health
-	$PoisonTimer.connect('timeout', self, '_on_PoisonTimer_timeout')
+	$PoisonTimer.timeout.connect(_on_PoisonTimer_timeout)
 
 
 func _change_status(new_status):

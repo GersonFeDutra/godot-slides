@@ -1,4 +1,4 @@
-tool
+@tool
 extends Node
 
 enum DIRECTIONS {PREVIOUS = -1, CURRENT = 0, NEXT = 1}
@@ -8,9 +8,9 @@ var slide_nodes = []
 
 func _input(event):
 	if event.is_action_pressed('ui_next'):
-		display(NEXT)
+		display(DIRECTIONS.NEXT)
 	if event.is_action_pressed('ui_previous'):
-		display(PREVIOUS)
+		display(DIRECTIONS.PREVIOUS)
 
 func initialize():
 	for slide in get_children():
@@ -21,7 +21,7 @@ func initialize():
 	add_child(slide_current)
 	slide_current.show()
 
-func display(direction=CURRENT):
+func display(direction=DIRECTIONS.CURRENT):
 	set_process_input(false)
 	var previous_slide = slide_current
 	
@@ -38,7 +38,7 @@ func display(direction=CURRENT):
 	
 #	var animation = "enter_from_right" if direction == NEXT else "enter_from_left"
 	var animation = "fade_in"
-	yield(new_slide.play(animation), "completed")
+	await new_slide.play(animation)
 	
 	previous_slide.hide()
 	remove_child(previous_slide)

@@ -1,9 +1,9 @@
-extends Position2D
+extends Marker2D
 
 var z_index_start = 0
 
 func _ready():
-	$"..".connect("direction_changed", self, '_on_Parent_direction_changed')
+	$"..".direction_changed.connect(_on_Parent_direction_changed)
 	z_index_start = z_index
 
 

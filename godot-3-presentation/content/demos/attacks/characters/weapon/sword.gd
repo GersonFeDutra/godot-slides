@@ -9,7 +9,7 @@ var state = null
 # Also common in platform games or for jump mechanics.
 # You register the next jump before the character hits the ground
 enum ATTACK_INPUT_STATES { WAITING, LISTENING, REGISTERED }
-var attack_input_state = WAITING
+var attack_input_state = ATTACK_INPUT_STATES.WAITING
 var ready_for_next_attack = false
 # The combo is hard-coded in each weapon
 # Unless the weapon has more than 2 or 3,
@@ -31,7 +31,7 @@ var combo = [{
 	{
 		'damage': 1,
 		'animation': 'attack_fast',
-		'effect': [GlobalConstants.STATUS_POISONED, 2]
+		'effect': [GlobalConstants.STATUSES.STATUS_POISONED, 2]
 	},
 	{
 		'damage': 3,
@@ -43,49 +43,49 @@ var hit_objects = []
 
 
 func _ready():
-	$AnimationPlayer.connect('animation_finished', self, "_on_animation_finished")
-	self.connect("body_entered", self, "_on_body_entered")
-	_change_state(IDLE)
+	$AnimationPlayer.animation_finished.connect(_on_animation_finished)
+	body_entered.connect(_on_body_entered)
+	_change_state(STATES.IDLE)
 
 
 func _change_state(new_state):
 	match state:
-		ATTACK:
+		STATES.ATTACK:
 			hit_objects = []
-			attack_input_state = WAITING
+			attack_input_state = ATTACK_INPUT_STATES.WAITING
 			ready_for_next_attack = false
 
 	match new_state:
-		IDLE:
+		STATES.IDLE:
 			combo_count = 0
 			$AnimationPlayer.play('idle')
 			monitoring = false
-		ATTACK:
+		STATES.ATTACK:
 			attack_current = combo[combo_count -1]
 			$AnimationPlayer.play(attack_current['animation'])
 			monitoring = true
 	state = new_state
 
 func _input(event):
-	if not state == ATTACK:
+	if not state == STATES.ATTACK:
 		return
-	if attack_input_state != LISTENING:
+	if attack_input_state != ATTACK_INPUT_STATES.LISTENING:
 		return
 	if event.is_action_pressed('attack'):
-		attack_input_state = REGISTERED
+		attack_input_state = ATTACK_INPUT_STATES.REGISTERED
 
-func _physics_process(delta):
-	if attack_input_state == REGISTERED and ready_for_next_attack:
+func _physics_process(_delta: float):
+	if attack_input_state == ATTACK_INPUT_STATES.REGISTERED and ready_for_next_attack:
 		attack()
 
 func attack():
 	combo_count += 1
-	_change_state(ATTACK)
+	_change_state(STATES.ATTACK)
 
 
 # use with AnimationPlayer func track
 func set_attack_input_listening():
-	attack_input_state = LISTENING
+	attack_input_state = ATTACK_INPUT_STATES.LISTENING
 
 
 # use with AnimationPlayer func track
@@ -100,12 +100,12 @@ func _on_body_entered(body):
 	body.take_damage(self, attack_current['damage'], attack_current['effect'])
 
 
-func _on_animation_finished(name):
+func _on_animation_finished(_name):
 	if not attack_current:
 		return
 
-	if attack_input_state == REGISTERED and combo_count < MAX_COMBO_COUNT:
+	if attack_input_state == ATTACK_INPUT_STATES.REGISTERED and combo_count < MAX_COMBO_COUNT:
 		attack()
 	else:
-		_change_state(IDLE)
+		_change_state(STATES.IDLE)
 		emit_signal("attack_finished")

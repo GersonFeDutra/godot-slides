@@ -3,9 +3,9 @@ extends Node
 signal swiped(direction)
 signal swipe_canceled(start_position)
 
-export(float, 1.0, 1.5) var MAX_DIAGONAL_SLOPE = 1.3
+@export_range(1.0, 1.5) var MAX_DIAGONAL_SLOPE := 1.3
 
-onready var timer = $SwipeTimeout
+@onready var timer = $SwipeTimeout
 var swipe_start_position = Vector2()
 
 func _input(event):

@@ -1,0 +1,166 @@
+[gd_scene load_steps=6 format=3 uid="uid://cld4x7fdx7do2"]
+
+[ext_resource type="Theme" path="res://theme/godot.theme" id="1"]
+[ext_resource type="Texture2D" uid="uid://qusjycnak04j" path="res://theme/sprites/header_dusk.png" id="2"]
+
+[sub_resource type="GDScript" id="1"]
+script/source = "@tool
+extends Control
+
+@export var title := \"\":
+	set = set_title
+@export var subtitle := \"\":
+	set = set_subtitle
+
+var FONTS_DEFAULT = {
+	'title': preload(\"res://theme/fonts/title_montserrat.tres\"),
+	'subtitle': preload(\"res://theme/fonts/subtitle_montserrat.tres\"),
+}
+var FONTS_CJK = {
+	'title': preload(\"res://theme/fonts/title_noto.tres\"),
+	'subtitle': preload(\"res://theme/fonts/subtitle_noto.tres\"),
+}
+
+@onready var title_node := $Column/Title
+@onready var title_shadow_node := $Column/Title/Shadow
+@onready var subtitle_node := $Column/Subtitle
+@onready var subtitle_shadow_node := $Column/Subtitle/Shadow
+
+func _ready():
+	self.title = title
+	self.subtitle = subtitle
+
+func set_title(string):
+	title = string
+	if not title_node:
+		return
+	title_node.display(string)
+
+func set_subtitle(string):
+	subtitle = string
+	if not subtitle_node:
+		return
+	subtitle_node.display(string)
+
+func translate():
+	var locale = TranslationServer.get_locale()
+	var fonts = FONTS_DEFAULT
+	if locale in ['ja', 'ko', 'zh']:
+			fonts = FONTS_CJK
+
+	title_node.set('custom_fonts/font', fonts['title'])
+	title_shadow_node.set('custom_fonts/font', fonts['title'])
+	subtitle_node.set('custom_fonts/font', fonts['subtitle'])
+	subtitle_shadow_node.set('custom_fonts/font', fonts['subtitle'])
+
+func get_translation_data():
+	var data = { 'title': title }
+	if subtitle:
+		data['subtitle'] = subtitle
+	return data
+"
+
+[sub_resource type="GDScript" id="2"]
+script/source = "@tool
+extends Label
+
+@onready var shadow_node = $Shadow
+
+func display(string):
+	text = string
+	shadow_node.text = string
+
+func _on_Subtitle_visibility_updated(visible):
+	if visible:
+		vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+		shadow_node.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	else:
+		vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+		shadow_node.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+"
+
+[sub_resource type="GDScript" id="3"]
+script/source = "tool
+extends Label
+
+signal visibility_updated(visible)
+
+func display(string):
+	visible = string != \"\"
+	if not visible:
+		return
+	text = string
+	$Shadow.text = string
+
+func _on_visibility_changed():
+	emit_signal(\"visibility_updated\", visible)
+"
+
+[node name="Header" type="TextureRect" groups=["translate"]]
+anchors_preset = 10
+anchor_right = 1.0
+size_flags_horizontal = 3
+theme = ExtResource("1")
+texture = ExtResource("2")
+expand_mode = 1
+script = SubResource("1")
+title = "Title"
+
+[node name="Column" type="VBoxContainer" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Title" type="Label" parent="Column"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.2
+mouse_filter = 0
+text = "Title"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+uppercase = true
+script = SubResource("2")
+
+[node name="Shadow" type="Label" parent="Column/Title"]
+modulate = Color(0.351563, 0, 0.703125, 0.487922)
+show_behind_parent = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.2
+mouse_filter = 0
+text = "Title"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+uppercase = true
+
+[node name="Subtitle" type="Label" parent="Column"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 0
+text = "Test"
+horizontal_alignment = 1
+clip_text = true
+script = SubResource("3")
+_sections_unfolded = ["BBCode", "Theme", "custom_fonts"]
+
+[node name="Shadow" type="Label" parent="Column/Subtitle"]
+modulate = Color(0.34902, 0, 0.701961, 0.486275)
+show_behind_parent = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_vertical = 3
+mouse_filter = 0
+text = "Test"
+horizontal_alignment = 1
+clip_text = true
+script = SubResource("3")
+_sections_unfolded = ["BBCode", "Material", "Size Flags", "Theme", "Visibility", "custom_fonts"]
+
+[connection signal="visibility_changed" from="Column/Subtitle" to="Column/Subtitle" method="_on_visibility_changed"]

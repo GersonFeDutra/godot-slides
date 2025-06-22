@@ -6,10 +6,10 @@ enum DIRECTIONS {PREVIOUS = -1, NEXT = 1}
 
 func _ready():
 	for child in get_children():
-		child.connect("touched", self, "_on_touch_button_touched")
+		child.touched.connect(_on_touch_button_touched)
 
 func _on_touch_button_touched(button):
 	if button == $TouchButtonLeft:
-		emit_signal("slide_change_requested", PREVIOUS)
+		slide_change_requested.emit(DIRECTIONS.PREVIOUS)
 	if button == $TouchButtonRight:
-		emit_signal("slide_change_requested", NEXT)
+		slide_change_requested.emit(DIRECTIONS.NEXT)
